@@ -1,0 +1,358 @@
+############################################################################
+# MedShift360 API - manual testing
+#
+# 1. Install the VS Code extension "REST Client" (by Huachao Mao)
+# 2. Start the server:   cd backend  ->  npm run dev
+# 3. Click "Send Request" above any request below, top to bottom.
+#
+# OTPs and tokens are filled in automatically from earlier responses
+# (the "devOtp" field), so you never need to copy/paste them.
+# Change @phone / @email below if you want a fresh user.
+############################################################################
+
+@baseUrl = http://localhost:4000/api/v1
+@phone = 9123456780
+@email = ramesh.test@example.com
+@password = ramesh1955
+@caregiverPhone = 9123456781
+@caregiverEmail = suresh.test@example.com
+
+# Logged-in user's token - comes from "Login with phone OTP" (step 4).
+# If you log in by email instead, change "loginPhoneVerify" to "loginEmail".
+@token = {{loginPhoneVerify.response.body.data.tokens.accessToken}}
+@refreshToken = {{loginPhoneVerify.response.body.data.tokens.refreshToken}}
+@caregiverToken = {{caregiverRegister.response.body.data.tokens.accessToken}}
+
+
+### 0. Health check - is the server running?
+GET {{baseUrl}}/health
+
+
+############################################################################
+# REGISTRATION WITH MOBILE NUMBER (no email needed)
+############################################################################
+
+### 1. Send registration OTP
+# @name registerPhoneSendOtp
+POST {{baseUrl}}/auth/register/phone/send-otp
+Content-Type: application/json
+
+{ "phone": "{{phone}}" }
+
+### 2. Verify OTP and create the account
+# @name registerPhoneVerify
+POST {{baseUrl}}/auth/register/phone/verify
+Content-Type: application/json
+
+{
+  "phone": "{{phone}}",
+  "otp": "{{registerPhoneSendOtp.response.body.data.devOtp}}",
+  "fullName": "Ramesh Kumar",
+  "dateOfBirth": "1955-06-15",
+  "gender": "male"
+}
+
+
+############################################################################
+# LOGIN WITH MOBILE OTP
+############################################################################
+
+### 3. Send login OTP
+# @name loginPhoneSendOtp
+POST {{baseUrl}}/auth/login/phone/send-otp
+Content-Type: application/json
+
+{ "phone": "{{phone}}" }
+
+### 4. Verify login OTP  (gives the @token used by everything below)
+# @name loginPhoneVerify
+POST {{baseUrl}}/auth/login/phone/verify
+Content-Type: application/json
+
+{
+  "phone": "{{phone}}",
+  "otp": "{{loginPhoneSendOtp.response.body.data.devOtp}}"
+}
+
+### 5. Who am I?
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
+
+############################################################################
+# PROFILE
+############################################################################
+
+### 6. Get full profile
+GET {{baseUrl}}/users/me/profile
+Authorization: Bearer {{token}}
+
+### 7. Update profile (elderly-care fields)
+PATCH {{baseUrl}}/users/me/profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bloodGroup": "B+",
+  "heightCm": 165,
+  "weightKg": 68.5,
+  "addressLine1": "12, Gandhi Street",
+  "city": "Chennai",
+  "district": "Chennai",
+  "state": "Tamil Nadu",
+  "pincode": "600017",
+  "homeLatitude": 13.0418,
+  "homeLongitude": 80.2341,
+  "chronicConditions": ["Type 2 Diabetes", "Hypertension"],
+  "allergies": ["Penicillin"],
+  "currentMedications": [
+    { "name": "Metformin", "dosage": "500 mg", "frequency": "twice daily", "timing": "after food" }
+  ],
+  "mobilityAid": "walking_stick",
+  "hearingImpaired": true,
+  "livesAlone": true,
+  "preferredLanguage": "ta",
+  "preferredContactMethod": "call",
+  "largeTextMode": true
+}
+
+### 8. Emergency medical card
+GET {{baseUrl}}/users/me/medical-summary
+Authorization: Bearer {{token}}
+
+
+############################################################################
+# EMERGENCY CONTACTS
+############################################################################
+
+### 9. Add emergency contact
+# @name addContact
+POST {{baseUrl}}/users/me/emergency-contacts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Suresh Kumar", "relationship": "Son", "phone": "9812345678" }
+
+### 10. List emergency contacts
+GET {{baseUrl}}/users/me/emergency-contacts
+Authorization: Bearer {{token}}
+
+### 11. Update emergency contact
+PATCH {{baseUrl}}/users/me/emergency-contacts/{{addContact.response.body.data.contact.id}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "relationship": "Elder son", "notifyOnEmergency": true }
+
+### 12. Delete emergency contact
+DELETE {{baseUrl}}/users/me/emergency-contacts/{{addContact.response.body.data.contact.id}}
+Authorization: Bearer {{token}}
+
+
+############################################################################
+# AADHAAR (mock provider: the OTP is always 123456)
+# 284736192056 is a made-up number that passes the Aadhaar checksum.
+############################################################################
+
+### 13. Aadhaar status
+GET {{baseUrl}}/users/me/aadhaar
+Authorization: Bearer {{token}}
+
+### 14. Send Aadhaar OTP
+POST {{baseUrl}}/users/me/aadhaar/send-otp
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "aadhaarNumber": "2847 3619 2056", "consent": true }
+
+### 15. Verify Aadhaar OTP
+POST {{baseUrl}}/users/me/aadhaar/verify-otp
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "otp": "123456" }
+
+
+############################################################################
+# SESSION
+############################################################################
+
+### 16. Refresh tokens (use when you get TOKEN_EXPIRED)
+POST {{baseUrl}}/auth/token/refresh
+Content-Type: application/json
+
+{ "refreshToken": "{{refreshToken}}" }
+
+### 17. Logout
+POST {{baseUrl}}/auth/logout
+Content-Type: application/json
+
+{ "refreshToken": "{{refreshToken}}" }
+
+
+############################################################################
+# REGISTRATION / LOGIN WITH EMAIL + PASSWORD
+############################################################################
+
+### 18. Register with email
+# @name emailRegister
+POST {{baseUrl}}/auth/register/email
+Content-Type: application/json
+
+{
+  "fullName": "Ramesh Kumar",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### 19. Login with email
+# @name loginEmail
+POST {{baseUrl}}/auth/login/email
+Content-Type: application/json
+
+{ "email": "{{email}}", "password": "{{password}}" }
+
+### 20. Verify email with the OTP sent at registration
+POST {{baseUrl}}/auth/verify/email/confirm
+Authorization: Bearer {{loginEmail.response.body.data.tokens.accessToken}}
+Content-Type: application/json
+
+{ "otp": "{{emailRegister.response.body.data.emailVerification.devOtp}}" }
+
+
+############################################################################
+# FORGOT PASSWORD (works with phone or email)
+############################################################################
+
+### 21. Forgot password - send OTP
+# @name forgotPassword
+POST {{baseUrl}}/auth/password/forgot
+Content-Type: application/json
+
+{ "phone": "{{phone}}" }
+
+### 22. Reset password
+POST {{baseUrl}}/auth/password/reset
+Content-Type: application/json
+
+{
+  "phone": "{{phone}}",
+  "otp": "{{forgotPassword.response.body.data.devOtp}}",
+  "newPassword": "newpass2026"
+}
+
+
+############################################################################
+# CAREGIVER / FAMILY MEMBER
+# A second user (the son) registers and manages elderly relatives.
+############################################################################
+
+### 23. Caregiver: send registration OTP
+# @name caregiverSendOtp
+POST {{baseUrl}}/auth/register/phone/send-otp
+Content-Type: application/json
+
+{ "phone": "{{caregiverPhone}}" }
+
+### 24. Caregiver: create account
+# @name caregiverRegister
+POST {{baseUrl}}/auth/register/phone/verify
+Content-Type: application/json
+
+{
+  "phone": "{{caregiverPhone}}",
+  "otp": "{{caregiverSendOtp.response.body.data.devOtp}}",
+  "fullName": "Suresh Kumar",
+  "email": "{{caregiverEmail}}",
+  "password": "suresh2026"
+}
+
+### 25. Register an elderly person who has NO phone or email
+# @name createDependent
+POST {{baseUrl}}/dependents
+Authorization: Bearer {{caregiverToken}}
+Content-Type: application/json
+
+{
+  "fullName": "Kamala Ammal",
+  "relationship": "Grandmother",
+  "dateOfBirth": "1942-08-10",
+  "gender": "female",
+  "bloodGroup": "O+",
+  "chronicConditions": ["Arthritis"],
+  "mobilityAid": "wheelchair",
+  "preferredLanguage": "ta"
+}
+
+### 26. List people I look after
+GET {{baseUrl}}/dependents
+Authorization: Bearer {{caregiverToken}}
+
+### 27. Edit the dependent's profile
+PATCH {{baseUrl}}/dependents/{{createDependent.response.body.data.user.id}}/profile
+Authorization: Bearer {{caregiverToken}}
+Content-Type: application/json
+
+{ "allergies": ["Sulfa drugs"], "livesAlone": false }
+
+### 28. Add emergency contact for the dependent
+POST {{baseUrl}}/dependents/{{createDependent.response.body.data.user.id}}/emergency-contacts
+Authorization: Bearer {{caregiverToken}}
+Content-Type: application/json
+
+{ "name": "Suresh Kumar", "relationship": "Grandson", "phone": "{{caregiverPhone}}" }
+
+### 29. Link an EXISTING account (Ramesh) - OTP goes to Ramesh's phone
+# @name linkSendOtp
+POST {{baseUrl}}/dependents/link/send-otp
+Authorization: Bearer {{caregiverToken}}
+Content-Type: application/json
+
+{ "phone": "{{phone}}" }
+
+### 30. Confirm link with the OTP Ramesh shares
+POST {{baseUrl}}/dependents/link/verify
+Authorization: Bearer {{caregiverToken}}
+Content-Type: application/json
+
+{
+  "phone": "{{phone}}",
+  "otp": "{{linkSendOtp.response.body.data.devOtp}}",
+  "relationship": "Father"
+}
+
+### 31. (As Ramesh) who can manage my profile?
+GET {{baseUrl}}/users/me/caregivers
+Authorization: Bearer {{token}}
+
+
+############################################################################
+# ERROR EXAMPLES - see what the frontend receives
+############################################################################
+
+### 32. Invalid phone number -> 400 VALIDATION_ERROR
+POST {{baseUrl}}/auth/login/phone/send-otp
+Content-Type: application/json
+
+{ "phone": "12345" }
+
+### 33. Wrong password -> 401 INVALID_CREDENTIALS
+POST {{baseUrl}}/auth/login/email
+Content-Type: application/json
+
+{ "email": "{{email}}", "password": "wrongpass1" }
+
+### 34. No token -> 401 AUTH_REQUIRED
+GET {{baseUrl}}/users/me/profile
+
+
+############################################################################
+# DELETE ACCOUNT (careful - permanent)
+############################################################################
+
+### 35. Delete my account
+DELETE {{baseUrl}}/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "confirm": "DELETE" }
