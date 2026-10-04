@@ -18,11 +18,19 @@ import { initials } from "@/lib/utils";
 const doctors: Doctor[] = doctorData;
 const hospitals: Hospital[] = hospitalData;
 
-// Sample appointments until the bookings API exists
+/** e.g. "28 Sept 2026" for the date `days` days before today */
+function daysAgo(days: number) {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return date.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" });
+}
+
+// Sample appointments until the bookings API exists. Dates are relative to
+// today so the section always looks recent. Newest first.
 const recentActivity = [
-  { id: 1, hospital: "MGM Hospital", visit: "General Checkup", date: "Nov 10, 2025" },
-  { id: 2, hospital: "Apollo Hospital", visit: "Cardiac Checkup", date: "Nov 16, 2025" },
-  { id: 3, hospital: "MGM Hospital", visit: "Thyroid Checkup", date: "Nov 17, 2025" },
+  { id: 3, hospital: "MGM Hospital", visit: "Thyroid Checkup", date: daysAgo(2) },
+  { id: 2, hospital: "Apollo Hospital", visit: "Cardiac Checkup", date: daysAgo(6) },
+  { id: 1, hospital: "MGM Hospital", visit: "General Checkup", date: daysAgo(13) },
 ];
 
 const quickActions = [
