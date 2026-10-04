@@ -1,0 +1,90 @@
+[
+  {
+    "id": 1,
+    "name": "Dr. Arjun Mehta",
+    "specialization": "Cardiologist",
+    "experience": 14,
+    "hospital": "City General Hospital",
+    "rating": 4.8,
+    "image": "https://randomuser.me/api/portraits/men/4.jpg",
+    "availability": "Mon - Sat, 9AM - 2PM",
+    "contact": "+91 98765 43210"
+  },
+  {
+    "id": 2,
+    "name": "Dr. Priya Natarajan",
+    "specialization": "Neurologist",
+    "experience": 10,
+    "hospital": "Green Valley Clinic",
+    "rating": 4.6,
+    "image": "https://randomuser.me/api/portraits/women/2.jpg",
+    "availability": "Mon - Fri, 10AM - 5PM",
+    "contact": "+91 98989 76543"
+  },
+  {
+    "id": 3,
+    "name": "Dr. Karthik Reddy",
+    "specialization": "Orthopedic Surgeon",
+    "experience": 12,
+    "hospital": "Sunrise Health Center",
+    "rating": 4.5,
+    "image": "https://randomuser.me/api/portraits/men/7.jpg",
+    "availability": "Tue - Sun, 11AM - 6PM",
+    "contact": "+91 97979 11223"
+  },
+  {
+    "id": 4,
+    "name": "Dr. Sneha Balan",
+    "specialization": "Pediatrician",
+    "experience": 9,
+    "hospital": "Apollo Children’s Hospital",
+    "rating": 4.7,
+    "image": "https://randomuser.me/api/portraits/women/8.jpg",
+    "availability": "Mon - Sat, 8AM - 1PM",
+    "contact": "+91 91234 56780"
+  },
+  {
+    "id": 5,
+    "name": "Dr. Rohit Sharma",
+    "specialization": "Dermatologist",
+    "experience": 11,
+    "hospital": "DermaGlow Clinic",
+    "rating": 4.3,
+    "image": "https://randomuser.me/api/portraits/men/9.jpg",
+    "availability": "Mon - Fri, 10AM - 4PM",
+    "contact": "+91 90000 11345"
+  },
+  {
+    "id": 6,
+    "name": "Dr. Aisha Khan",
+    "specialization": "Gynecologist",
+    "experience": 15,
+    "hospital": "City General Hospital",
+    "rating": 4.9,
+    "image": "https://randomuser.me/api/portraits/women/14.jpg",
+    "availability": "Mon - Sat, 9AM - 6PM",
+    "contact": "+91 90888 77654"
+  },
+  {
+    "id": 7,
+    "name": "Dr. Naveen Krishnan",
+    "specialization": "ENT Specialist",
+    "experience": 8,
+    "hospital": "Green Valley Clinic",
+    "rating": 4.4,
+    "image": "https://randomuser.me/api/portraits/men/69.jpg",
+    "availability": "Mon - Sat, 12PM - 7PM",
+    "contact": "+91 93456 99871"
+  },
+  {
+    "id": 8,
+    "name": "Dr. Meera",
+    "specialization": "Psychiatrist",
+    "experience": 13,
+    "hospital": "MindCare Wellness Center",
+    "rating": 4.6,
+    "image": "https://randomuser.me/api/portraits/women/19.jpg",
+    "availability": "Mon - Fri, 9AM - 3PM",
+    "contact": "+91 95555 22211"
+  }
+]

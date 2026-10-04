@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "City General Hospital",
+    "location": "Chennai",
+    "image":"https://mgmhealthcare.in/emergencynamgm/images/about-us.jpg",
+    "beds": 50,
+    "type": "Government",
+    "rating": 4.3,
+    "distance": 1.2,
+    "departments": ["Cardiology, Neurology, Orthopedics, Pediatrics, Oncology, ENT"],
+            "wards": [
+                { "name": "Ward A", "beds": 10, "type": "General", "image": "https://media.telanganatoday.com/wp-content/uploads/2022/06/nims-.jpg" },
+                { "name": "Ward B", "beds": 7, "type": "Special", "image": "https://media.telanganatoday.com/wp-content/uploads/2022/06/nims-.jpg" }
+            ]
+  },
+  {
+    "id": 2,
+    "name": "Green Valley Clinic",
+    "location": "Chennai",
+    "image":"https://mgmhealthcare.in/emergencynamgm/images/about-us.jpg",
+    "beds": 30,
+    "rating": 4.1,
+    "type": "Private",
+    "distance": 1,
+    "departments": ["Cardiology, Neurology, Orthopedics, Dentistry, Oncology, ENT"],
+        "wards": [
+          { "name": "Ward A", "beds": 10, "type": "General", "image": "https://media.telanganatoday.com/wp-content/uploads/2022/06/nims-.jpg" },
+          { "name": "Ward B", "beds": 7, "type": "Special", "image": "https://media.telanganatoday.com/wp-content/uploads/2022/06/nims-.jpg" },
+          { "name": "Ward C", "beds": 7, "type": "Special", "image": "https://media.telanganatoday.com/wp-content/uploads/2022/06/nims-.jpg" }
+        ]
+  },
+  {
+    "id": 3,
+    "name": "Sunrise Health Center",
+    "location": "Chennai",
+    "image":"https://mgmhealthcare.in/emergencynamgm/images/about-us.jpg",
+    "beds": 17,
+    "rating": 4.5,
+    "distance": 2.5,
+    "type": "Private",
+    "departments": ["Cardiology, Pulmonology, Orthopedics, Pediatrics, Oncology, ENT"],
+        "wards": [
+          { "name": "Ward A", "beds": 10, "type": "General", "image": "https://media.telanganatoday.com/wp-content/uploads/2022/06/nims-.jpg" },
+          { "name": "Ward B", "beds": 7, "type": "Special", "image": "https://media.telanganatoday.com/wp-content/uploads/2022/06/nims-.jpg" },
+          { "name": "Ward C", "beds": 7, "type": "Special", "image": "https://media.telanganatoday.com/wp-content/uploads/2022/06/nims-.jpg" },
+          { "name": "Ward D", "beds": 7, "type": "Special", "image": "https://media.telanganatoday.com/wp-content/uploads/2022/06/nims-.jpg" }
+        ]
+  }
+]

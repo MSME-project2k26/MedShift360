@@ -1,0 +1,35 @@
+{
+  "promo": {
+    "title": "Discount 25%",
+    "subtitle": "on products of the week",
+    "images:": "https://naturesbounty.com/cdn/shop/products/001603.png?v=1667506624"
+  },
+  "categories": [
+    "Promo",
+    "Fitness",
+    "Programs"
+  ],
+  "medicines": [
+    {
+      "id": 1,
+      "name": "Kelo-Cote Gel",
+      "description": "For external use",
+      "price": 3099,
+      "image": "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTANlnMn5Mz9wQxZvjoGu7tzH8sL6jjcq7bhMTXsNeVenpYxKiDdpmI0Nbgdm7E_EjAe4PAKHD98fB_jZMsjsCVfOvTH60JouU0mWZx_gPMV_IU-c0kt_Ekpg"
+    },
+    {
+      "id": 2,
+      "name": "Nature's Bounty Calcium",
+      "description": "Arginine supplement",
+      "price": 1539,
+      "image": "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/nrt/nrt04233/v/31.jpg"
+    },
+    {
+      "id": 3,
+      "name": "YouWeFit Omega-3 Fish Oil",
+      "description": "For Joint & Heart Health",
+      "price": 1539,
+      "image": "https://store.wellversed.in/_next/image?url=https%3A%2F%2Fcdn.shopify.com%2Fs%2Ffiles%2F1%2F0233%2F6459%2F9885%2Ffiles%2F1_2_9b429ddf-1512-4eec-a596-3041db26262b.jpg%3Fv%3D1746123375&w=1080&q=75"
+    }
+  ]
+}

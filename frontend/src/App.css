@@ -1,0 +1,405 @@
+body {
+   font-family: "SF Pro DIsplay";
+  background: #f0f4f8;
+  margin: 0;
+  padding: 0;
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+html, body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+.whole-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 13px;
+  padding-top: 30px;
+  background-color: #f3f3f3;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  height: 100dvh;
+  overflow-y: scroll;
+}
+.whole-container2 {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 13px;
+  padding-top: 30px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  height: 100dvh;
+  overflow-y: scroll;
+}
+.bg-primary{
+  background-color: #13A4EC;
+}
+
+h2 {
+  text-align: left;
+}
+
+/* Input and Select Fields */
+input[type="text"],input[type="password"],input[type="email"],input[type="date"],input[type="tel"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.3s ease;
+        font-family: "SF Pro DIsplay";
+    
+    font-weight: 300;
+    margin-bottom: 20px;
+}
+
+input:focus,
+select:focus {
+  border-color: #13A4EC;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+
+.signup-btn{
+  width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    font-size: 14px;
+        font-family: "SF Pro DIsplay";
+    font-weight: 300;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: #13A4EC;
+    background: #13A4EC;
+    box-shadow: 0 4px 21px 0 #13A4EC;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+}
+.heading-txt{
+  font-size: 30px;
+   font-family: "SF Pro DIsplay";
+    font-weight: 600;
+}
+.login-txt{
+  font-family: "SF Pro DIsplay";
+    font-weight: 300;
+    font-size: 15px;
+    margin-top: 30px;
+    left: 16%;
+    position: relative;
+    width: max-content;
+}
+.login-txt a{
+      font-weight: bold;
+      color: #13A4EC;
+}
+.inp-txt{
+    background: #fff;
+    padding: 1px;
+    font-size: 10px;
+    position: absolute;
+    margin-top: -8px;
+    z-index: 3;
+    margin-left: 20px;
+}
+.eye-btn{
+      width: max-content;
+    height: fit-content;
+    margin-top: 14px;
+}
+.spacer-2{
+  width: 100%;
+  height: 2dvh;
+}
+.otp-heading-txt{
+      font-size: 30px;
+    font-weight: 500;
+    margin-top: 150px;
+}
+.otp-para-txt{
+    font-size: 16px;
+    font-family: "SF Pro DIsplay";
+    font-weight: lighter;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.login-text-head{
+  display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+        margin-top: 150px;
+        margin-bottom: 50px;
+}
+.login-text-para{
+      top: -9px;
+    position: relative;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    opacity: 0.7;
+    color: #13A4EC;
+
+}
+.lg-txt-icon{
+     font-size: 50px;
+    color: #13A4EC;
+    top: -15px;
+    position: relative;
+}
+.lg-alt-text{
+      margin-top: 23px;
+    opacity: 0.6;
+    color: #121212;
+
+}
+.lg-alt-line{
+    width: 36%;
+    height: 2px;
+    background: #13A4EC;
+    margin-top: 35px;
+    opacity: 0.4;
+}
+.oth-login-btn{
+ width: 49%;
+    padding: 2%;
+    background: #13a4ec12;
+    padding-left: 16%;
+    padding-right: 17%;
+    border-radius: 10px;
+    border: 1px solid #0002;
+    margin-top: 22px;
+    font-weight: 600;
+    align-items: center;
+    cursor: pointer;
+    justify-content: center;
+}
+.oth-login-btn span{
+  color: #13A4EC;
+}
+.user-address{
+font-family: "SF Pro DIsplay";
+    font-size: 19px;
+    font-style: normal;
+    font-weight: 400;
+    top: 43px;
+    width: max-content;
+    position: relative;
+    rotate: 20deg;
+}
+.user-address2{
+    font-family: "SF Pro DIsplay";
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 400;
+    margin-top: 25px;
+    margin-left: 28px;
+        width: max-content;
+}
+.home-text-title-2{
+     font-family: "SF Pro DIsplay";
+    font-size: 19px;
+    font-style: normal;
+    font-weight: 600;
+    margin-top: 10px;
+}
+.upcmg-sch-cover{
+  width: 100%;
+  height: auto;
+  overflow-x: scroll;
+}
+.upcmg-sch-div{
+  width: 100%;
+  height: 100px;
+  background-color: #13A4EC;
+  border-radius: 10px;
+  left: 0;
+    position: relative;
+}
+.upcmg-sch-img{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+    background-color: #ffff;
+    margin-left: 9px;
+    top: 14px;
+    position: relative;
+}
+.upcmg-sch-trt-name{
+       color: #FFF;
+    font-family: "SF Pro DIsplay";
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    width: max-content;
+    margin-left: 21%;
+    margin-top: -33px;
+}
+.upcmg-sch-hosp-name{
+    color: #FFF;
+    font-family: "SF Pro DIsplay";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    margin-left: 21%;
+    margin-top: -7px;
+    opacity: 0.8;
+}
+.upcmg-sch-date{
+    width: max-content;
+    height: 20px;
+    background-color: #33333380;
+    margin-left: 21%;
+    margin-top: 3px;
+    padding: 1%;
+    border-radius: 5px;
+}
+.upcmg-sch-date-text{
+  color: #fff;
+    font-size: 8px;
+    width: max-content;
+}
+.prev-btn-upcm-sch{
+  left: -20px;
+}
+.next-btn-upcm-sch{
+  right: -20px;
+}
+.upcmg-sch-btn{
+      font-size: 10px;
+    background-color: #ffff;
+    width: max-content;
+    padding: 3px;
+    border-radius: 5px;
+    margin-left: 70%;
+    margin-top: -44px;
+}
+.book-div-cover{
+  width: 100%;
+  height: max-content;
+  display: flex;
+      gap: 50px;
+}
+.book-crc-img{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: #87B7FF;
+    display: flex;
+    align-items: center;
+        font-size: 35px;
+        color: #13A4EC;
+    justify-content: center;
+}
+.book-crc-text{
+  font-size: 13px;
+    font-weight: 600;
+}
+.hosp-cover-div{
+  height: 220px;
+  background-color: #c1b3f4;
+  border-radius: 15px;
+}
+.badge-num{
+      scale: 0.9;
+    top: -36px;
+    position: relative;
+    left: 52%;
+}
+.hosp-img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.67);
+    border-radius: 15px;
+}
+.hosp-cover-name{
+      font-size: 18px;
+    font-weight: 600;
+    font-family: "SF Pro DIsplay";
+    position: relative;
+    top: -12px;
+    left: -9px;
+}
+.hosp-cover-loc-name{
+       font-size: 16px;
+    font-weight: 500;
+   font-family: "SF Pro DIsplay";
+    position: relative;
+    left: -9px;
+}
+.text-cover{
+  position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 60px;
+    bottom: 62px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+.text-blur{
+      background: linear-gradient(135deg, #6c5ce700, #00b89400);
+    color: white;
+    font-weight: 700;
+    filter: blur(6px);
+      width: 100%;
+    height: 60px;
+
+      position: relative;
+    z-index: 2;
+}
+.text-cover {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 20px;
+    color: white;
+    z-index: 2;
+    /* background: rgba(0, 0, 0, 0.2); */
+    backdrop-filter: blur(2px);
+}
+.nrby-hosp-badges{
+      position: relative;
+    bottom: 209px;
+    left: 7%;
+}
+/* Form feedback (API errors, hints) */
+.form-error{
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: center;
+}
+.form-hint{
+  color: #13A4EC;
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: center;
+  opacity: 0.8;
+}
+.signup-btn:disabled,
+.oth-login-btn:disabled{
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.link-btn{
+  color: #13A4EC;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.link-btn:disabled{
+  opacity: 0.5;
+  cursor: not-allowed;
+}
