@@ -12,7 +12,7 @@ import type { OtpState } from "./Otp";
 
 type Mode = "otp" | "password";
 
-const activeMode = { borderColor: "#13A4EC", borderWidth: 2 };
+const activeMode = { borderColor: "var(--brand)", color: "var(--brand)" };
 
 const Login = () => {
   const navigate = useNavigate();
@@ -121,7 +121,7 @@ const Login = () => {
       )}
 
       <button className="signup-btn" type="submit" disabled={loading}>
-        {loading ? "Please wait..." : mode === "otp" ? "Send OTP" : "Login In"}
+        {loading ? "Please wait..." : mode === "otp" ? "Send OTP" : "Login"}
       </button>
       <div className="flex flex-wrap justify-around">
         <div className="lg-alt-line"></div>

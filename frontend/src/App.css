@@ -1,6 +1,5 @@
 body {
-   font-family: "SF Pro DIsplay";
-  background: #f0f4f8;
+  background: var(--background);
   margin: 0;
   padding: 0;
 }
@@ -16,29 +15,27 @@ html, body {
 }
 
 .whole-container {
-  max-width: 400px;
+  max-width: 480px;
   margin: 0 auto;
-  padding: 13px;
-  padding-top: 30px;
-  background-color: #f3f3f3;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
+  padding: 16px;
+  padding-top: 24px;
+  background-color: var(--background);
+  color: var(--foreground);
   height: 100dvh;
   overflow-y: scroll;
 }
 .whole-container2 {
-  max-width: 400px;
+  max-width: 480px;
   margin: 0 auto;
-  padding: 13px;
-  padding-top: 30px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
+  padding: 16px;
+  padding-top: 24px;
+  background-color: var(--background);
+  color: var(--foreground);
   height: 100dvh;
   overflow-y: scroll;
 }
 .bg-primary{
-  background-color: #13A4EC;
+  background-color: var(--brand);
 }
 
 h2 {
@@ -51,66 +48,62 @@ input[type="number"],
 select {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: border 0.3s ease;
-        font-family: "SF Pro DIsplay";
-    
-    font-weight: 300;
-    margin-bottom: 20px;
+  border: 1px solid var(--input);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 15px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 20px;
 }
 
 input:focus,
 select:focus {
-  border-color: #13A4EC;
+  border-color: var(--brand);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 20%, transparent);
 }
 
 
 .signup-btn{
   width: 100%;
-    padding: 12px;
-    margin-top: 20px;
-    font-size: 14px;
-        font-family: "SF Pro DIsplay";
-    font-weight: 300;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    background-color: #13A4EC;
-    background: #13A4EC;
-    box-shadow: 0 4px 21px 0 #13A4EC;
+  padding: 13px;
+  margin-top: 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  background-color: var(--brand);
   color: #fff;
   border: none;
-  border-radius: 9px;
+  border-radius: 12px;
+}
+.signup-btn:hover:not(:disabled){
+  background-color: var(--brand-strong);
 }
 .heading-txt{
   font-size: 30px;
-   font-family: "SF Pro DIsplay";
     font-weight: 600;
 }
 .login-txt{
-  font-family: "SF Pro DIsplay";
-    font-weight: 300;
-    font-size: 15px;
-    margin-top: 30px;
-    left: 16%;
-    position: relative;
-    width: max-content;
+  font-size: 15px;
+  margin-top: 28px;
+  text-align: center;
+  color: var(--muted-foreground);
 }
 .login-txt a{
-      font-weight: bold;
-      color: #13A4EC;
+      font-weight: 600;
+      color: var(--brand);
 }
 .inp-txt{
-    background: #fff;
-    padding: 1px;
-    font-size: 10px;
+    background: var(--background);
+    color: var(--muted-foreground);
+    padding: 0 4px;
+    font-size: 11px;
     position: absolute;
     margin-top: -8px;
     z-index: 3;
-    margin-left: 20px;
+    margin-left: 12px;
 }
 .eye-btn{
       width: max-content;
@@ -128,7 +121,6 @@ select:focus {
 }
 .otp-para-txt{
     font-size: 16px;
-    font-family: "SF Pro DIsplay";
     font-weight: lighter;
     text-align: center;
     margin-bottom: 30px;
@@ -142,42 +134,36 @@ select:focus {
         margin-bottom: 50px;
 }
 .login-text-para{
-      top: -9px;
+    top: -9px;
     position: relative;
     text-align: center;
     justify-content: center;
     display: flex;
-    opacity: 0.7;
-    color: #13A4EC;
-
+    color: var(--muted-foreground);
 }
 .lg-txt-icon{
      font-size: 50px;
-    color: #13A4EC;
+    color: var(--brand);
     top: -15px;
     position: relative;
 }
 .lg-alt-text{
-      margin-top: 23px;
-    opacity: 0.6;
-    color: #121212;
-
+    margin-top: 23px;
+    color: var(--muted-foreground);
 }
 .lg-alt-line{
     width: 36%;
-    height: 2px;
-    background: #13A4EC;
+    height: 1px;
+    background: var(--border);
     margin-top: 35px;
-    opacity: 0.4;
 }
 .oth-login-btn{
- width: 49%;
-    padding: 2%;
-    background: #13a4ec12;
-    padding-left: 16%;
-    padding-right: 17%;
-    border-radius: 10px;
-    border: 1px solid #0002;
+    width: 49%;
+    padding: 10px;
+    background: var(--card);
+    color: var(--foreground);
+    border-radius: 12px;
+    border: 1px solid var(--border);
     margin-top: 22px;
     font-weight: 600;
     align-items: center;
@@ -185,10 +171,9 @@ select:focus {
     justify-content: center;
 }
 .oth-login-btn span{
-  color: #13A4EC;
+  color: var(--brand);
 }
 .user-address{
-font-family: "SF Pro DIsplay";
     font-size: 19px;
     font-style: normal;
     font-weight: 400;
@@ -198,7 +183,6 @@ font-family: "SF Pro DIsplay";
     rotate: 20deg;
 }
 .user-address2{
-    font-family: "SF Pro DIsplay";
     font-size: 17px;
     font-style: normal;
     font-weight: 400;
@@ -207,7 +191,6 @@ font-family: "SF Pro DIsplay";
         width: max-content;
 }
 .home-text-title-2{
-     font-family: "SF Pro DIsplay";
     font-size: 19px;
     font-style: normal;
     font-weight: 600;
@@ -221,7 +204,7 @@ font-family: "SF Pro DIsplay";
 .upcmg-sch-div{
   width: 100%;
   height: 100px;
-  background-color: #13A4EC;
+  background-color: var(--brand);
   border-radius: 10px;
   left: 0;
     position: relative;
@@ -237,7 +220,6 @@ font-family: "SF Pro DIsplay";
 }
 .upcmg-sch-trt-name{
        color: #FFF;
-    font-family: "SF Pro DIsplay";
     font-size: 20px;
     font-style: normal;
     font-weight: 400;
@@ -247,7 +229,6 @@ font-family: "SF Pro DIsplay";
 }
 .upcmg-sch-hosp-name{
     color: #FFF;
-    font-family: "SF Pro DIsplay";
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -298,7 +279,7 @@ font-family: "SF Pro DIsplay";
     display: flex;
     align-items: center;
         font-size: 35px;
-        color: #13A4EC;
+        color: var(--brand);
     justify-content: center;
 }
 .book-crc-text{
@@ -326,7 +307,6 @@ font-family: "SF Pro DIsplay";
 .hosp-cover-name{
       font-size: 18px;
     font-weight: 600;
-    font-family: "SF Pro DIsplay";
     position: relative;
     top: -12px;
     left: -9px;
@@ -334,7 +314,6 @@ font-family: "SF Pro DIsplay";
 .hosp-cover-loc-name{
        font-size: 16px;
     font-weight: 500;
-   font-family: "SF Pro DIsplay";
     position: relative;
     left: -9px;
 }
@@ -375,13 +354,13 @@ font-family: "SF Pro DIsplay";
 }
 /* Form feedback (API errors, hints) */
 .form-error{
-  color: #dc2626;
+  color: var(--destructive);
   font-size: 13px;
   margin-top: 10px;
   text-align: center;
 }
 .form-hint{
-  color: #13A4EC;
+  color: var(--brand);
   font-size: 13px;
   margin-top: 10px;
   text-align: center;
@@ -393,7 +372,7 @@ font-family: "SF Pro DIsplay";
   cursor: not-allowed;
 }
 .link-btn{
-  color: #13A4EC;
+  color: var(--brand);
   font-weight: bold;
   background: none;
   border: none;

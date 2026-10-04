@@ -11,7 +11,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   if (loading) {
     return (
       <div className="whole-container flex justify-center items-center">
-        <Spinner className="size-12 text-[#13A4EC]" />
+        <Spinner className="size-12 text-[var(--brand)]" />
       </div>
     );
   }

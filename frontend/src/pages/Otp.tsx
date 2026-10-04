@@ -155,7 +155,7 @@ const Otp: React.FC = () => {
             <p className="form-hint">Dev mode OTP: {devOtp ?? "123456 (mock Aadhaar)"}</p>
           )}
 
-          <p className="login-txt" style={{ left: 0 }}>
+          <p className="login-txt">
             Didn't get it?{" "}
             <button type="button" className="link-btn" onClick={handleResend} disabled={cooldown > 0}>
               {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend OTP"}
@@ -164,7 +164,7 @@ const Otp: React.FC = () => {
         </>
       ) : (
         <div style={{ textAlign: "center", marginTop: "150px" }}>
-          <Spinner className="size-16 text-[#13A4EC] mx-auto" />
+          <Spinner className="size-16 text-[var(--brand)] mx-auto" />
           <p style={{ marginTop: "10px" }}>Verifying OTP...</p>
         </div>
       )}

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaArrowRight, FaCamera, FaRegIdCard } from "react-icons/fa6";
+import { Link, NavLink } from "react-router-dom";
+import { FaArrowRight, FaRegIdCard } from "react-icons/fa6";
 import { IoHome, IoDocumentText } from "react-icons/io5";
-import { FaUser,FaCapsules, FaHospital } from "react-icons/fa";
+import { FaCapsules, FaHospital } from "react-icons/fa";
 import { LiaAllergiesSolid } from "react-icons/lia";
 import { PiCrosshairDuotone } from "react-icons/pi";
 import { Badge } from "@/components/ui/badge"
 import { MdOutlineCoronavirus, MdOutlineHome, MdOutlineLightbulb, MdOutlineLocalHospital, MdOutlinePerson, MdOutlineShield, MdOutlineTimelapse, MdOutlineUploadFile } from "react-icons/md";
 import { RiMedicineBottleLine } from "react-icons/ri";
-import { LucideBellRing, LogOut } from "lucide-react";
+import { LucideBellRing, Settings } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { api, errorMessage } from "@/lib/api";
-import { useAuth } from "@/lib/auth";
+import { initials } from "@/lib/utils";
 import type { ProfileResult } from "@/types/api";
 
 const NOT_ADDED = "Not added";
@@ -29,8 +29,6 @@ const listOrEmpty = (items: string[]) => (items.length ? items.join(", ") : NOT_
 const formatPhone = (phone: string) => phone.replace(/^\+91(\d{5})(\d{5})$/, "+91 $1 $2");
 
 const Profile: React.FC = () => {
-  const navigate = useNavigate();
-  const { signOut } = useAuth();
   const [data, setData] = useState<ProfileResult | null>(null);
   const [error, setError] = useState("");
 
@@ -38,15 +36,10 @@ const Profile: React.FC = () => {
     api.getProfile().then(setData).catch((err) => setError(errorMessage(err)));
   }, []);
 
-  const handleLogout = async () => {
-    await signOut();
-    navigate("/login", { replace: true });
-  };
-
   if (!data) {
     return (
       <div className="whole-container flex flex-col justify-center items-center">
-        {error ? <p className="form-error">{error}</p> : <Spinner className="size-12 text-[#13A4EC]" />}
+        {error ? <p className="form-error">{error}</p> : <Spinner className="size-12 text-[var(--brand)]" />}
       </div>
     );
   }
@@ -63,60 +56,63 @@ const Profile: React.FC = () => {
 
   return (
     <div className="whole-container">
-       <div className="flex items-center justify-center-safe mt-2 pb-5">
-          <h1 className="font-bold text-lg left-[3%] relative">Profile</h1>
-           <NavLink to="/profile" className={({ isActive }) => ` w-[50px] h-[50px] rounded-[100px] bg-amber-300 left-[30%] relative flex justify-center items-center text-white transition-colors duration-200 ${isActive ? "text-sky-500" : "text-sky-800/70 hover:text-sky-800" }`}>
-            <p className="text-2xl "><FaUser /></p>
-          </NavLink>
-        </div>
-
-
-
-      <div>
-            <div className="flex-col bg-white w-full h-max rounded-2xl p-3 mb-5 shadow-md">
-                <img className="w-20 relative mt-5 mx-3 rounded-full outline-2 outline-offset-0 outline-blue-500" src="https://img.freepik.com/free-vector/woman-head-profile_24908-81681.jpg?semt=ais_hybrid&w=740&q=80"></img>
-                <div className="relative -mt-5 mx-17">
-                      <Badge variant="secondary" className="bg-blue-500 text-white dark:bg-blue-600 rounded-full p-1 scale-100 cursor-pointer">
-                      <FaCamera />
-                    </Badge>
-              </div>
-                    <h2 className="font-bold text-lg mb-1 -mt-20 mx-30 w-max pt-1">{user.fullName}</h2>
-                    {aadhaar.isVerified ? (
-                      <h2 className="text-sky-950/40 text-md mb-1 mx-30 flex items-center gap-2">
-                        Aadhar: {aadhaar.aadhaarMasked}
-                        <Badge className="bg-green-600 text-white rounded-full">Verified</Badge>
-                      </h2>
-                    ) : (
-                      <h2 className="text-sky-950/40 text-md mb-1 mx-30 flex items-center gap-2">
-                        Aadhar: Not verified
-                        <Link to="/aadhaar"><Badge className="bg-amber-500 text-white rounded-full cursor-pointer">Verify</Badge></Link>
-                      </h2>
-                    )}
-                    <a href="" className="text-sky-400 decoration-sky-400 font-medium text-sm flex items-center mx-30 w-max" >View Suggestion &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<FaArrowRight /></a>
-                    <div className="flex flex-row mt-6">
-                                <div className="flex flex-col items-center mx-9">
-                                    <h3 className="font-bold text-md opacity-60">Age</h3>
-                                     <h3 className="font-bold text-lg">{profile.age ?? "—"}</h3>
-                                </div>
-                                <div className="flex flex-col items-center mx-6">
-                                    <h3 className="font-bold text-md opacity-60">Gender</h3>
-                                     <h3 className="font-bold text-lg">{profile.gender ? GENDER_LABELS[profile.gender] : "—"}</h3>
-                                </div>
-                                 <div className="flex flex-col items-center mx-6">
-                                    <h3 className="font-bold text-md opacity-60 w-max">Blood Group</h3>
-                                     <h3 className="font-bold text-lg text-red-600">{profile.bloodGroup && profile.bloodGroup !== "unknown" ? profile.bloodGroup : "—"}</h3>
-                                </div>
-                                
-                    </div>
-            </div>
+      <div className="flex items-center justify-between pb-5">
+        <h1 className="font-semibold text-lg">Profile</h1>
+        <Link
+          to="/settings"
+          aria-label="Settings"
+          className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-foreground!"
+        >
+          <Settings size={20} />
+        </Link>
       </div>
 
-      <div className="healthScore flex gap-6">
-          <div className="w-50 p-3 h-22 bg-sky-200 rounded-2xl flex flex-col items-center">
-            <h3 className="text-sky-950">Health Score</h3>
-            <h1 className="text-sky-950 text-4xl font-bold">88</h1>
+      <div className="bg-white w-full rounded-2xl p-4 mb-5 shadow-md">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 shrink-0 rounded-full bg-[var(--brand-soft)] text-[var(--brand)] text-xl font-semibold flex items-center justify-center">
+            {initials(user.fullName)}
           </div>
-          <div className="w-50 p-3 h-22 bg-white shadow-md rounded-2xl flex flex-row items-center">
+          <div className="flex flex-col min-w-0 gap-1">
+            <h2 className="font-bold text-lg truncate">{user.fullName}</h2>
+            {aadhaar.isVerified ? (
+              <p className="text-sky-950/40 text-sm flex items-center gap-2">
+                Aadhar: {aadhaar.aadhaarMasked}
+                <Badge className="bg-green-600 text-white rounded-full">Verified</Badge>
+              </p>
+            ) : (
+              <p className="text-sky-950/40 text-sm flex items-center gap-2">
+                Aadhar: Not verified
+                <Link to="/aadhaar"><Badge className="bg-amber-500 text-white rounded-full cursor-pointer">Verify</Badge></Link>
+              </p>
+            )}
+            <Link to="/suggestion" className="text-sky-400 font-medium text-sm flex items-center gap-2 w-max">
+              View Suggestion <FaArrowRight />
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 mt-5 pt-4 border-t border-border text-center">
+          <div>
+            <p className="text-sm opacity-60">Age</p>
+            <p className="font-bold text-lg">{profile.age ?? "—"}</p>
+          </div>
+          <div>
+            <p className="text-sm opacity-60">Gender</p>
+            <p className="font-bold text-lg">{profile.gender ? GENDER_LABELS[profile.gender] : "—"}</p>
+          </div>
+          <div>
+            <p className="text-sm opacity-60">Blood Group</p>
+            <p className="font-bold text-lg text-red-600">{profile.bloodGroup && profile.bloodGroup !== "unknown" ? profile.bloodGroup : "—"}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="healthScore grid grid-cols-2 gap-4">
+          <div className="p-3 bg-sky-200 rounded-2xl flex flex-col items-center justify-center">
+            <h3 className="text-sky-950">Profile Complete</h3>
+            <h1 className="text-sky-950 text-4xl font-bold">{data.profileCompletion.percentage}%</h1>
+          </div>
+          <div className="p-3 bg-white shadow-md rounded-2xl flex flex-row items-center">
                <h3 className="text-sky-400 text-2xl"><FaRegIdCard/></h3>
                  <h3 className="text-black mx-3 font-bold text-center">Medical ID Card</h3>
           </div>
@@ -149,15 +145,6 @@ const Profile: React.FC = () => {
                 <h4 className="text-md opacity-60">Allergies</h4>
                 <h4 className="text-lg font-bold">{listOrEmpty(profile.allergies)}</h4>
             </div>
-          </div>
-
-          <div className="flex flex-row items-center mb-4">
-            <h4 className="text-3xl font-bold text-sky-400 mx-3"><MdOutlineLocalHospital/></h4>
-            <div className="flex flex-col mx-3">
-                <h4 className="text-md opacity-60">Past Surgeries/Treatments</h4>
-                <h4 className="text-lg font-bold">{NOT_ADDED}</h4>
-            </div>
-        
           </div>
 
               <div className="border-t-2">
@@ -254,7 +241,6 @@ const Profile: React.FC = () => {
         <button className="flex text-md font-bold bg-white text-stone-500 p-1 px-3 py-3 w-100  mt-5 mb-3  rounded-xl items-center cursor-pointer shadow-md"><MdOutlineShield/> Privacy Controls</button>
         <button className="flex text-md font-bold bg-white text-stone-500 p-1 px-3 py-3 w-100  mt-5 mb-3  rounded-xl items-center cursor-pointer shadow-md"> <MdOutlineTimelapse/> Update History</button>
       </div>
-      <button onClick={handleLogout} className="flex justify-center gap-2 text-md font-bold bg-white text-red-600 px-3 py-3 w-full mb-3 rounded-xl items-center cursor-pointer shadow-md"><LogOut size={18} /> Logout</button>
        
                  
       {/* bottom spacer */}

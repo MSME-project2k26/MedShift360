@@ -60,7 +60,7 @@ const Signup = () => {
 
   return (
     <form className="whole-container" onSubmit={handleSubmit}>
-      <h2 className="heading-txt">Sign Up</h2>
+      <h2 className="heading-txt mb-8">Sign Up</h2>
 
       <h5 className="inp-txt">Patient Name</h5>
       <Input
@@ -106,7 +106,7 @@ const Signup = () => {
       />
 
       <Select value={gender} onValueChange={(v) => setGender(v as Gender)}>
-        <SelectTrigger>
+        <SelectTrigger className="w-full h-12! rounded-xl bg-card">
           <SelectValue placeholder="Select Gender" />
         </SelectTrigger>
         <SelectContent>
