@@ -21,7 +21,7 @@ export function MobileOnly({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-dvh flex items-center justify-center p-6 bg-background">
       <div className="max-w-sm text-center flex flex-col items-center gap-4">
-        <div className="w-20 h-20 rounded-full bg-[var(--brand-soft)] text-[var(--brand)] flex items-center justify-center">
+        <div className="w-20 h-20 rounded-full bg-brand-soft text-brand flex items-center justify-center">
           <Smartphone size={40} />
         </div>
         <h1 className="text-2xl font-semibold">Open MedShift360 on your phone</h1>

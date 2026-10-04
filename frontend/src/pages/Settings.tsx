@@ -41,7 +41,7 @@ const Settings = () => {
 
       {user && (
         <section className="bg-card border border-border rounded-2xl p-4 mb-6 flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-[var(--brand-soft)] text-[var(--brand)] font-semibold flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-brand-soft text-brand font-semibold flex items-center justify-center">
             {initials(user.fullName)}
           </div>
           <div className="flex flex-col min-w-0">
@@ -63,7 +63,7 @@ const Settings = () => {
               aria-checked={theme === value}
               onClick={() => setTheme(value)}
               className={`flex flex-col items-center gap-1 py-2 rounded-lg text-sm cursor-pointer transition-colors ${
-                theme === value ? "bg-card text-[var(--brand)] font-semibold shadow-sm" : "text-muted-foreground"
+                theme === value ? "bg-card text-brand font-semibold shadow-sm" : "text-muted-foreground"
               }`}
             >
               <Icon size={18} />
@@ -76,7 +76,7 @@ const Settings = () => {
       <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2 px-1">Security</h2>
       <section className="bg-card border border-border rounded-2xl mb-6">
         <Link to="/aadhaar" className="flex items-center gap-3 p-4 text-foreground!">
-          <span className="text-2xl text-[var(--brand)]"><IoMdFingerPrint /></span>
+          <span className="text-2xl text-brand"><IoMdFingerPrint /></span>
           <span className="flex-1 font-medium">Aadhaar verification</span>
           {aadhaar?.isVerified ? (
             <Badge className="bg-green-600 text-white rounded-full">Verified</Badge>

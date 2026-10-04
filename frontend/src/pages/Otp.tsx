@@ -164,7 +164,7 @@ const Otp: React.FC = () => {
         </>
       ) : (
         <div style={{ textAlign: "center", marginTop: "150px" }}>
-          <Spinner className="size-16 text-[var(--brand)] mx-auto" />
+          <Spinner className="size-16 text-brand mx-auto" />
           <p style={{ marginTop: "10px" }}>Verifying OTP...</p>
         </div>
       )}

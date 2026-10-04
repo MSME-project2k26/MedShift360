@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaArrowRight, FaRegIdCard } from "react-icons/fa6";
-import { IoHome, IoDocumentText } from "react-icons/io5";
-import { FaCapsules, FaHospital } from "react-icons/fa";
 import { LiaAllergiesSolid } from "react-icons/lia";
 import { PiCrosshairDuotone } from "react-icons/pi";
 import { Badge } from "@/components/ui/badge"
@@ -10,6 +8,7 @@ import { MdOutlineCoronavirus, MdOutlineHome, MdOutlineLightbulb, MdOutlineLocal
 import { RiMedicineBottleLine } from "react-icons/ri";
 import { LucideBellRing, Settings } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
+import { BottomNav } from "@/components/BottomNav";
 import { api, errorMessage } from "@/lib/api";
 import { initials } from "@/lib/utils";
 import type { ProfileResult } from "@/types/api";
@@ -39,7 +38,7 @@ const Profile: React.FC = () => {
   if (!data) {
     return (
       <div className="whole-container flex flex-col justify-center items-center">
-        {error ? <p className="form-error">{error}</p> : <Spinner className="size-12 text-[var(--brand)]" />}
+        {error ? <p className="form-error">{error}</p> : <Spinner className="size-12 text-brand" />}
       </div>
     );
   }
@@ -69,7 +68,7 @@ const Profile: React.FC = () => {
 
       <div className="bg-white w-full rounded-2xl p-4 mb-5 shadow-md">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 shrink-0 rounded-full bg-[var(--brand-soft)] text-[var(--brand)] text-xl font-semibold flex items-center justify-center">
+          <div className="w-16 h-16 shrink-0 rounded-full bg-brand-soft text-brand text-xl font-semibold flex items-center justify-center">
             {initials(user.fullName)}
           </div>
           <div className="flex flex-col min-w-0 gap-1">
@@ -252,30 +251,7 @@ const Profile: React.FC = () => {
                                     <div className="spacer-2"></div>
                                     <div className="spacer-2"></div>
       </div>
-      {/* Bottom Navbar */}
-      <div className="flex flex-row w-full fixed h-15 bg-white bottom-0 left-0 justify-around items-center border-t">
-
-        <NavLink to="/home">
-          <IoHome size={22} />
-          <p className="text-xs">Home</p>
-        </NavLink>
-
-        <NavLink to="/insurance">
-          <IoDocumentText size={22} />
-          <p className="text-xs">Insurance</p>
-        </NavLink>
-
-        <NavLink to="/pharmacy">
-          <FaCapsules size={22} />
-          <p className="text-xs">Pharmacy</p>
-        </NavLink>
-
-        <NavLink to="/hospital">
-          <FaHospital size={22} />
-          <p className="text-xs">Hospitals</p>
-        </NavLink>
-
-      </div>
+      <BottomNav />
       </div>
           
           
