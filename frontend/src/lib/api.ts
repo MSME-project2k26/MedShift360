@@ -4,6 +4,7 @@ import type {
   AuthResult,
   EmergencyContact,
   Gender,
+  PatientProfile,
   MeResult,
   OtpSent,
   ProfileResult,
@@ -148,6 +149,9 @@ export const api = {
 
   // Profile
   getProfile: () => authRequest<ProfileResult>("GET", "/users/me/profile"),
+  /** Send only the fields to change; null clears an optional field. */
+  updateProfile: (patch: Partial<PatientProfile> & { fullName?: string }) =>
+    authRequest<ProfileResult>("PATCH", "/users/me/profile", patch),
 
   // Aadhaar verification (for the logged-in user)
   aadhaarStatus: () => authRequest<AadhaarStatus>("GET", "/users/me/aadhaar"),

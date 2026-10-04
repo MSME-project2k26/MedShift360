@@ -84,6 +84,8 @@ export interface PatientProfile {
   allergies: string[];
   currentMedications: Medication[];
   mobilityAid: string | null;
+  abhaNumber: string | null;
+  pmjayId: string | null;
   insuranceProvider: string | null;
   insurancePolicyNumber: string | null;
   preferredLanguage: string | null;
@@ -108,3 +110,5 @@ export interface ProfileResult {
   emergencyContacts: EmergencyContact[];
   profileCompletion: { percentage: number; missingFields: string[] };
 }
+
+export type InsuranceFields = Pick<PatientProfile, "insuranceProvider" | "insurancePolicyNumber" | "abhaNumber" | "pmjayId">;
