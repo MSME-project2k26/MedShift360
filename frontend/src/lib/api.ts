@@ -2,8 +2,12 @@ import type {
   AadhaarOtpSent,
   AadhaarStatus,
   AuthResult,
+  DoctorSuggestions,
   EmergencyContact,
   Gender,
+  HospitalDetailResult,
+  LatLng,
+  NearbyHospitals,
   PatientProfile,
   MeResult,
   OtpSent,
@@ -122,6 +126,19 @@ async function authRequest<T>(method: Method, path: string, body?: unknown): Pro
 
 // ---------- endpoints ----------
 
+/** { a: 1, b: undefined } -> "?a=1" */
+function queryString(params: Record<string, string | number | boolean | undefined>) {
+  const entries = Object.entries(params).filter(([, v]) => v !== undefined) as [string, string | number | boolean][];
+  return entries.length ? `?${new URLSearchParams(entries.map(([k, v]) => [k, String(v)]))}` : "";
+}
+
+export interface NearbyHospitalsInput extends LatLng {
+  radiusKm?: number;
+  type?: "all" | "government" | "private";
+  emergencyOnly?: boolean;
+  limit?: number;
+}
+
 export interface RegisterPhoneInput {
   phone: string;
   otp: string;
@@ -162,6 +179,16 @@ export const api = {
   // Emergency contacts
   addEmergencyContact: (contact: { name: string; relationship: string; phone: string; isPrimary?: boolean }) =>
     authRequest<{ contact: EmergencyContact }>("POST", "/users/me/emergency-contacts", contact),
+
+  // Live hospitals and doctors (OpenStreetMap)
+  nearbyHospitals: (input: NearbyHospitalsInput) =>
+    authRequest<NearbyHospitals>("GET", `/hospitals/nearby${queryString({ ...input })}`),
+  /** `from` adds the distance to the hospital */
+  hospital: (id: string, from?: LatLng | null) =>
+    authRequest<HospitalDetailResult>("GET", `/hospitals/${encodeURIComponent(id)}${queryString({ lat: from?.lat, lng: from?.lng })}`),
+  /** Without a location the backend uses the home location saved in the profile */
+  suggestedDoctors: (from?: LatLng | null, radiusKm?: number) =>
+    authRequest<DoctorSuggestions>("GET", `/users/me/suggested-doctors${queryString({ lat: from?.lat, lng: from?.lng, radiusKm })}`),
 };
 
 /** User-facing text for any error (backend messages are plain language and safe to show). */

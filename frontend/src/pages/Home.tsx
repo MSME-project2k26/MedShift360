@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Siren, Sparkles, Star, MapPin, BedDouble, ChevronRight, CalendarDays, X } from "lucide-react";
+import { Search, Siren, Sparkles, MapPin, ChevronRight, CalendarDays, X, Stethoscope, Building2 } from "lucide-react";
 import { FaCapsules, FaHospital } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { RiRobot2Line } from "react-icons/ri";
-import hospitalData from "../data/hospital.json";
-import doctorData from "../data/doctor.json";
-import type { Doctor } from "../types/Doctor";
-import type { Hospital } from "../types/Hospital";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { BottomNav } from "@/components/BottomNav";
+import { OwnershipBadge } from "@/components/PlaceCard";
+import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { useCurrentLocation } from "@/lib/location";
 import { initials } from "@/lib/utils";
+import type { Place } from "@/types/api";
 
-const doctors: Doctor[] = doctorData;
-const hospitals: Hospital[] = hospitalData;
+/** A suggested clinic with the kind of doctor it was picked for */
+type SuggestedDoctor = Place & { doctorTitle: string };
 
 /** e.g. "28 Sept 2026" for the date `days` days before today */
 function daysAgo(days: number) {
@@ -60,17 +60,13 @@ function SectionHeader({ title, to }: { title: string; to?: string }) {
   );
 }
 
-/** Hospital photo with a branded placeholder when the image fails to load. */
-function HospitalImage({ src, alt }: { src: string; alt: string }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) {
-    return (
-      <div className="h-32 bg-brand-soft text-brand flex items-center justify-center">
-        <FaHospital size={36} />
-      </div>
-    );
-  }
-  return <img className="h-32 w-full object-cover" src={src} alt={alt} loading="lazy" onError={() => setFailed(true)} />;
+function SectionStatus({ loading, text }: { loading: boolean; text: string }) {
+  return (
+    <p className="text-sm text-muted-foreground flex items-center gap-2">
+      {loading && <Spinner className="size-4 text-brand" />}
+      {text}
+    </p>
+  );
 }
 
 const Home: React.FC = () => {
@@ -78,6 +74,44 @@ const Home: React.FC = () => {
   const { user } = useAuth();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const { location } = useCurrentLocation();
+  const [hospitals, setHospitals] = useState<Place[] | null>(null);
+  const [doctors, setDoctors] = useState<SuggestedDoctor[] | null>(null);
+
+  const from = location.status === "ready" ? location.coords : null;
+  const located = location.status !== "locating";
+
+  // Live nearby hospitals and doctors for the patient's conditions; failures just leave the section empty
+  useEffect(() => {
+    if (!located) return;
+    let cancelled = false;
+    if (from) {
+      api
+        .nearbyHospitals({ ...from, radiusKm: 10, limit: 10 })
+        .then((r) => !cancelled && setHospitals(r.hospitals))
+        .catch(() => !cancelled && setHospitals([]));
+    } else {
+      setHospitals([]);
+    }
+    api
+      .suggestedDoctors(from, 10)
+      .then((r) => {
+        if (cancelled) return;
+        const seen = new Set<string>();
+        const list: SuggestedDoctor[] = [];
+        for (const s of r.suggestions) {
+          for (const d of s.doctors.slice(0, 3)) {
+            if (!seen.has(d.id)) list.push({ ...d, doctorTitle: s.specialty.doctorTitle });
+            seen.add(d.id);
+          }
+        }
+        setDoctors(list);
+      })
+      .catch(() => !cancelled && setDoctors([]));
+    return () => {
+      cancelled = true;
+    };
+  }, [from, located]);
 
   useEffect(() => {
     if (open) {
@@ -92,8 +126,12 @@ const Home: React.FC = () => {
   }, [open, navigate]);
 
   const q = query.trim().toLowerCase();
-  const matchedHospitals = hospitals.filter((h) => !q || `${h.name} ${h.location} ${h.type}`.toLowerCase().includes(q));
-  const matchedDoctors = doctors.filter((d) => !q || `${d.name} ${d.specialization} ${d.hospital}`.toLowerCase().includes(q));
+  const matchedHospitals = (hospitals ?? []).filter(
+    (h) => !q || `${h.name} ${h.address ?? ""} ${h.ownership}`.toLowerCase().includes(q),
+  );
+  const matchedDoctors = (doctors ?? []).filter(
+    (d) => !q || `${d.name} ${d.doctorTitle} ${d.address ?? ""}`.toLowerCase().includes(q),
+  );
   const firstName = user?.fullName.split(" ")[0] ?? "";
 
   return (
@@ -194,8 +232,13 @@ const Home: React.FC = () => {
 
       {/* Hospitals */}
       <SectionHeader title={q ? `Hospitals (${matchedHospitals.length})` : "Hospitals Near You"} to="/hospital" />
-      {matchedHospitals.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No hospitals match "{query}".</p>
+      {hospitals === null ? (
+        <SectionStatus loading text="Finding hospitals near you..." />
+      ) : matchedHospitals.length === 0 ? (
+        <SectionStatus
+          loading={false}
+          text={q ? `No hospitals match "${query}".` : from ? "No hospitals found within 10 km." : "Turn on location to see hospitals near you."}
+        />
       ) : (
         <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-px-4 -mx-4 px-4 pb-1">
           {matchedHospitals.map((hospital) => (
@@ -205,19 +248,14 @@ const Home: React.FC = () => {
               onClick={() => navigate(`/hospital/${hospital.id}`)}
               className="snap-start shrink-0 w-64 text-left rounded-2xl overflow-hidden bg-card border border-border cursor-pointer active:scale-[0.98] transition-transform"
             >
-              <HospitalImage src={hospital.image} alt={hospital.name} />
+              <div className="h-20 bg-brand-soft text-brand flex items-center justify-center">
+                <FaHospital size={30} />
+              </div>
               <div className="p-3">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-semibold leading-tight">{hospital.name}</p>
-                  <span className="flex items-center gap-1 text-xs font-semibold shrink-0">
-                    <Star size={13} className="fill-amber-400 text-amber-400" /> {hospital.rating}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><MapPin size={13} /> {hospital.location} · {hospital.distance} km</span>
-                  <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium">
-                    <BedDouble size={13} /> {hospital.beds} beds
-                  </span>
+                <p className="font-semibold leading-tight line-clamp-2">{hospital.name}</p>
+                <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1 shrink-0"><MapPin size={13} /> {hospital.distanceKm} km</span>
+                  <OwnershipBadge place={hospital} />
                 </div>
               </div>
             </button>
@@ -226,25 +264,27 @@ const Home: React.FC = () => {
       )}
 
       {/* Doctors */}
-      <SectionHeader title={q ? `Doctors (${matchedDoctors.length})` : "Suggested Doctors"} />
-      {matchedDoctors.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No doctors match "{query}".</p>
+      <SectionHeader title={q ? `Doctors (${matchedDoctors.length})` : "Suggested Doctors"} to="/suggestion" />
+      {doctors === null ? (
+        <SectionStatus loading text="Finding doctors for your health conditions..." />
+      ) : matchedDoctors.length === 0 ? (
+        <SectionStatus loading={false} text={q ? `No doctors match "${query}".` : "No doctors found near you yet."} />
       ) : (
         <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-px-4 -mx-4 px-4 pb-1">
           {matchedDoctors.map((doctor) => (
-            <div key={doctor.id} className="snap-start shrink-0 w-36 rounded-2xl p-3 bg-card border border-border flex flex-col items-center text-center">
-              <img
-                className="w-16 h-16 rounded-full object-cover bg-muted"
-                src={doctor.image}
-                alt={doctor.name}
-                loading="lazy"
-              />
-              <p className="font-semibold text-sm mt-2 leading-tight">{doctor.name}</p>
-              <p className="text-xs text-muted-foreground">{doctor.specialization}</p>
-              <p className="flex items-center gap-1 text-xs font-semibold mt-1">
-                <Star size={12} className="fill-amber-400 text-amber-400" /> {doctor.rating}
-              </p>
-            </div>
+            <button
+              key={doctor.id}
+              type="button"
+              onClick={() => navigate(`/hospital/${doctor.id}`)}
+              className="snap-start shrink-0 w-40 rounded-2xl p-3 bg-card border border-border flex flex-col items-center text-center cursor-pointer active:scale-[0.98] transition-transform"
+            >
+              <span className="w-14 h-14 rounded-full bg-brand-soft text-brand flex items-center justify-center">
+                {doctor.kind === "hospital" ? <Building2 size={24} /> : <Stethoscope size={24} />}
+              </span>
+              <p className="font-semibold text-sm mt-2 leading-tight line-clamp-2">{doctor.name}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{doctor.doctorTitle}</p>
+              <p className="text-xs font-semibold text-brand mt-1">{doctor.distanceKm} km</p>
+            </button>
           ))}
         </div>
       )}

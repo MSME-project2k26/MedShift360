@@ -25,6 +25,9 @@ Other scripts: `npm run lint`, `npm run build`, `npm run preview`.
 | Verify Aadhaar (`/aadhaar`) | `POST /users/me/aadhaar/send-otp`, `POST /users/me/aadhaar/verify-otp` |
 | Profile | `GET /users/me/profile` |
 | Settings | `POST /auth/logout` (plus the theme, stored on the device) |
+| Hospitals (`/hospital`) | `GET /hospitals/nearby` (Government / Private / All, distance slider, map) |
+| Hospital details (`/hospital/:id`) | `GET /hospitals/:id` |
+| Suggested doctors (`/suggestion`) and Home | `GET /users/me/suggested-doctors`, `GET /hospitals/nearby` |
 
 - `src/lib/api.ts` is the single API client. It unwraps the backend's `{ success, data | error }` envelope, throws `ApiError` with the stable `error.code`, and on `TOKEN_EXPIRED` refreshes the session once (the refresh token rotates) and retries.
 - `src/components/AuthProvider.tsx` keeps the logged-in user. `RequireAuth` protects every page except login, signup and OTP.
@@ -40,4 +43,4 @@ Other scripts: `npm run lint`, `npm run build`, `npm run preview`.
 
 With the backend's `OTP_DEV_ECHO=true`, the OTP screen shows the OTP from the API response (only in `npm run dev`). The mock Aadhaar provider always accepts `123456`. `2847 3619 2056` is a test Aadhaar number that passes the checksum.
 
-Hospital, pharmacy, ambulance and insurance pages still use the local JSON in `src/data/`, because the backend has no APIs for them yet.
+Hospitals and doctors are live OpenStreetMap data. The location comes from the phone's GPS (`src/lib/location.ts`), falling back to the home location saved in the profile. Browsers only allow GPS on `https` or `localhost`, so opening the app by LAN IP on a phone uses the home location. The pharmacy page still uses `src/data/medicines.json`, and ambulance booking is still a mock.

@@ -314,6 +314,52 @@ Authorization: Bearer <caregiver token>
 ```
 Returns `201` with the same body as `GET /profile` for the new dependent. If the elder later gets a phone, they can log in themselves with OTP.
 
+### 3.6 Nearby hospitals & suggested doctors (live)
+
+Live data from **OpenStreetMap** through the free public Overpass API (no key). All routes need a bearer token.
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/hospitals/nearby?lat=&lng=` | Government and private hospitals near a point, nearest first |
+| GET | `/hospitals/:hospitalId?lat=&lng=` | One hospital or clinic (`lat`/`lng` optional, adds the distance) |
+| GET | `/users/me/suggested-doctors?lat=&lng=` | Doctors, clinics and hospitals for the conditions in the profile |
+| GET | `/dependents/:patientId/suggested-doctors` | The same for an elder I manage |
+
+`/hospitals/nearby` query: `radiusKm` (1-50, default 10), `type` (`all` \| `government` \| `private`), `emergencyOnly` (`true` = only hospitals tagged with 24/7 emergency), `limit` (1-100, default 50).
+
+```json
+{
+  "origin": { "lat": 13.0827, "lng": 80.2707 },
+  "radiusKm": 10,
+  "counts": { "all": 489, "government": 40, "private": 449 },
+  "hospitals": [
+    {
+      "id": "way-123456",
+      "name": "Rajiv Gandhi Government General Hospital",
+      "kind": "hospital",
+      "ownership": "government",
+      "ownershipSource": "name",
+      "distanceKm": 0.7,
+      "address": "Park Town, Chennai, 600003",
+      "phone": null,
+      "emergency": null,
+      "beds": null,
+      "specialities": [],
+      "openingHours": null,
+      "website": null,
+      "location": { "lat": 13.0806, "lng": 80.2770 },
+      "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=13.0806,80.2770",
+      "osmUrl": "https://www.openstreetmap.org/way/123456"
+    }
+  ],
+  "source": { "name": "OpenStreetMap", "attribution": "© OpenStreetMap contributors", "license": "ODbL" }
+}
+```
+
+- **Government or private.** Few Indian hospitals have an ownership tag in OpenStreetMap, so `ownershipSource` says how it was decided: `tagged` (OSM `operator:type`), `name` (for example "Govt", "Corporation", "ESI", "PHC", "Taluk" mean government; "Pvt Ltd" and "Nursing Home" mean private) or `assumed` (no government sign, treated as private). Fields not in the map data are `null`.
+- **Suggested doctors.** Each chronic condition in the profile is mapped to specialties (diabetes and thyroid go to a diabetologist, high BP to a cardiologist, arthritis to an orthopaedic doctor, and so on; see `src/services/places/specialties.js`). Clinics match by their OSM speciality tag or by name ("Joseph Eye Clinic", "Diabetes Care Centre"). Seniors also get an elderly-care group, and patients with no conditions get general physicians. Without `lat`/`lng` the saved home location is used; with neither, the error is `LOCATION_REQUIRED`.
+- **Reliability.** Mirrors are tried in order (`OVERPASS_URLS`). Results are reused for `PLACES_CACHE_TTL_SECONDS` per area. If every mirror fails, the last good result for that area (up to 24 hours old) is served, or else `502 PLACES_SERVICE_UNAVAILABLE`. Lookups are limited to 120 per 15 minutes per IP. Only the rounded location is sent to Overpass, never health data.
+
 ---
 
 ## 4. Error codes
@@ -340,7 +386,9 @@ Returns `201` with the same body as `GET /profile` for the new dependent. If the
 | 423 | `ACCOUNT_LOCKED` | Too many wrong passwords (`details.retryAfterSeconds`) |
 | 429 | `OTP_COOLDOWN` | Resent too fast (`details.retryAfterSeconds`; use it for a countdown timer) |
 | 429 | `OTP_LIMIT_REACHED` / `RATE_LIMITED` | Too many requests |
-| 502 | `SMS_DELIVERY_FAILED` / `EMAIL_DELIVERY_FAILED` / `AADHAAR_SERVICE_UNAVAILABLE` | Third-party service down |
+| 400 | `LOCATION_REQUIRED` | Suggested doctors without a device or saved home location |
+| 404 | `HOSPITAL_NOT_FOUND` | Unknown hospital id |
+| 502 | `SMS_DELIVERY_FAILED` / `EMAIL_DELIVERY_FAILED` / `AADHAAR_SERVICE_UNAVAILABLE` / `PLACES_SERVICE_UNAVAILABLE` | Third-party service down |
 
 ---
 
@@ -355,7 +403,18 @@ Returns `201` with the same body as `GET /profile` for the new dependent. If the
 
 ## 6. Going to production
 
-- **SMS:** set `SMS_PROVIDER=twilio`, or add an Indian provider (MSG91, Gupshup, etc.) in `src/services/notification.service.js`. Indian SMS requires **DLT registration** of your sender ID and message templates.
+- **SMS:** use `SMS_PROVIDER=msg91` (recommended for India) or `SMS_PROVIDER=twilio`. Indian SMS requires **DLT registration** of your business, sender ID and every message template. With MSG91 the message text lives in the approved template and the backend only sends the variables. Setup:
+  1. **DLT registration** on an operator portal (for example Jio TrueConnect, Airtel DLT or Vi). Register as a Principal Entity (needs PAN and a business or organisation document). You receive an **Entity ID**.
+  2. On the DLT portal, register a 6-letter **Header** (sender ID), for example `MEDSFT`, of type *Transactional / Service-Implicit*.
+  3. Register two **content templates**, category *Service Implicit*, linked to that header. `{#var#}` is DLT's variable placeholder:
+     - OTP: `{#var#} is your MedShift360 verification code. It is valid for {#var#} minutes. Do not share it with anyone. - MedShift360`
+     - Caregiver: `{#var#} wants to help manage your MedShift360 health profile. If you agree, share OTP {#var#} with them. Valid for {#var#} minutes. Ignore if you do not know them. - MedShift360`
+  4. In **MSG91** (msg91.com), add the Entity ID and Header, then create two SMS templates with the *same text* and the DLT Template IDs, using MSG91 variables in place of `{#var#}`:
+     - OTP: `##otp## is your MedShift360 verification code. It is valid for ##minutes## minutes. ...`
+     - Caregiver: `##name## wants to help manage ... share OTP ##otp## with them. Valid for ##minutes## minutes. ...`
+
+     The variable names must be exactly `otp`, `minutes` and `name`.
+  5. In `.env`, set `SMS_PROVIDER=msg91`, `MSG91_AUTH_KEY`, `MSG91_OTP_TEMPLATE_ID`, `MSG91_CAREGIVER_TEMPLATE_ID` (the MSG91 template IDs), and `OTP_DEV_ECHO=false`.
 - **Aadhaar:** real Aadhaar OTP e-KYC is only available through a UIDAI-licensed AUA/KUA or an authorised e-KYC partner. Add an adapter in `src/services/aadhaar/providers/` that implements the contract described in `providers/index.js`.
 - **Housekeeping:** schedule `purge_expired_otps()` daily with Supabase Cron (see the bottom of the migration file).
 
@@ -370,7 +429,8 @@ backend/
 │   ├── config/              # env validation, Supabase client
 │   ├── routes/              # URL → controller mapping
 │   ├── controllers/         # request/response handling
-│   ├── services/            # business logic (OTP, tokens, Aadhaar, profile, caregivers)
+│   ├── services/            # business logic (OTP, tokens, Aadhaar, profile, caregivers,
+│   │   └── places/          #   live hospitals/doctors from OpenStreetMap)
 │   ├── validators/          # Zod request schemas
 │   ├── middleware/          # auth, validation, rate limits, errors
 │   └── utils/               # phone/Aadhaar/age helpers, crypto, logger

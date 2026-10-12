@@ -14,3 +14,8 @@ export function initials(name: string) {
     .map((part) => part[0].toUpperCase())
     .join("")
 }
+
+/** "+91 44 2530 5000;+91 44 ..." -> "tel:+914425305000" (first number, digits only) */
+export function telHref(phone: string) {
+  return `tel:${phone.split(/[;,/]/)[0].replace(/[^\d+]/g, "")}`
+}

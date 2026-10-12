@@ -168,4 +168,15 @@ async function getMedicalSummary(userId) {
   };
 }
 
-module.exports = { getFullProfile, updateProfile, getMedicalSummary, toDbProfile };
+/** What doctor suggestions need: conditions, senior status and the saved home location. */
+async function getHealthContext(userId) {
+  const p = fromDbProfile(await getProfileRow(userId));
+  const hasHome = p.homeLatitude !== null && p.homeLongitude !== null;
+  return {
+    chronicConditions: p.chronicConditions || [],
+    isSeniorCitizen: isSeniorCitizen(p.dateOfBirth),
+    homeLocation: hasHome ? { lat: Number(p.homeLatitude), lng: Number(p.homeLongitude) } : null,
+  };
+}
+
+module.exports = { getFullProfile, updateProfile, getMedicalSummary, getHealthContext, toDbProfile };

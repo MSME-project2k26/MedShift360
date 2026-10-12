@@ -27,6 +27,12 @@ module.exports = {
     limit: 20,
     message: 'Too many login attempts. Please wait 15 minutes and try again.',
   }),
+  // Hospital/doctor lookups call a shared public service (Overpass); keep usage polite
+  placesLimiter: limiter({
+    windowMinutes: 15,
+    limit: 120,
+    message: 'Too many searches. Please wait a few minutes and try again.',
+  }),
   otpLimiter: limiter({
     windowMinutes: 15,
     limit: 15,

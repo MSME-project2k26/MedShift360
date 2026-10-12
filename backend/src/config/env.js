@@ -25,10 +25,13 @@ const schema = z.object({
   OTP_MAX_PER_HOUR: z.coerce.number().int().positive().default(5),
   OTP_DEV_ECHO: bool,
 
-  SMS_PROVIDER: z.enum(['console', 'twilio']).default('console'),
+  SMS_PROVIDER: z.enum(['console', 'twilio', 'msg91']).default('console'),
   TWILIO_ACCOUNT_SID: z.string().optional(),
   TWILIO_AUTH_TOKEN: z.string().optional(),
   TWILIO_FROM_NUMBER: z.string().optional(),
+  MSG91_AUTH_KEY: z.string().optional(),
+  MSG91_OTP_TEMPLATE_ID: z.string().optional(),
+  MSG91_CAREGIVER_TEMPLATE_ID: z.string().optional(),
 
   EMAIL_PROVIDER: z.enum(['console', 'smtp']).default('console'),
   SMTP_HOST: z.string().optional(),
@@ -36,6 +39,14 @@ const schema = z.object({
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
   EMAIL_FROM: z.string().default('MedShift360 <no-reply@medshift360.in>'),
+
+  // Live hospital/doctor data (OpenStreetMap). Comma-separated Overpass API mirrors, tried in order.
+  OVERPASS_URLS: z
+    .string()
+    .default(
+      'https://overpass-api.de/api/interpreter,https://maps.mail.ru/osm/tools/overpass/api/interpreter,https://overpass.private.coffee/api/interpreter',
+    ),
+  PLACES_CACHE_TTL_SECONDS: z.coerce.number().int().min(0).default(600),
 
   AADHAAR_PROVIDER: z.enum(['mock']).default('mock'),
   AADHAAR_HASH_SECRET: z.string().min(32),
@@ -54,6 +65,8 @@ env.isProduction = env.NODE_ENV === 'production';
 env.corsOrigins = env.CORS_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean);
 // The OTP is only ever echoed back outside production
 env.echoOtp = env.OTP_DEV_ECHO && !env.isProduction;
+env.overpassUrls = env.OVERPASS_URLS.split(',').map((u) => u.trim()).filter(Boolean);
+env.msg91Templates = { otp: env.MSG91_OTP_TEMPLATE_ID, caregiver_link: env.MSG91_CAREGIVER_TEMPLATE_ID };
 
 if (env.isProduction) {
   const unsafe = [];
@@ -70,6 +83,12 @@ if (env.isProduction) {
 if (env.SMS_PROVIDER === 'twilio' && !(env.TWILIO_ACCOUNT_SID && env.TWILIO_AUTH_TOKEN && env.TWILIO_FROM_NUMBER)) {
   // eslint-disable-next-line no-console
   console.error('SMS_PROVIDER=twilio requires TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and TWILIO_FROM_NUMBER');
+  process.exit(1);
+}
+
+if (env.SMS_PROVIDER === 'msg91' && !(env.MSG91_AUTH_KEY && env.MSG91_OTP_TEMPLATE_ID && env.MSG91_CAREGIVER_TEMPLATE_ID)) {
+  // eslint-disable-next-line no-console
+  console.error('SMS_PROVIDER=msg91 requires MSG91_AUTH_KEY, MSG91_OTP_TEMPLATE_ID and MSG91_CAREGIVER_TEMPLATE_ID');
   process.exit(1);
 }
 

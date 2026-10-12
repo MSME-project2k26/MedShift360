@@ -73,6 +73,9 @@ test('protected routes require a bearer token', async () => {
     ['GET', '/users/me/profile'],
     ['POST', '/users/me/aadhaar/send-otp'],
     ['GET', '/dependents'],
+    ['GET', '/hospitals/nearby?lat=13.08&lng=80.27'],
+    ['GET', '/hospitals/node-123'],
+    ['GET', '/users/me/suggested-doctors'],
   ]) {
     const { status, body } = await call(method, path);
     assert.equal(status, 401, `${method} ${path}`);

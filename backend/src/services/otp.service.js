@@ -27,8 +27,9 @@ function buildMessage({ code, purpose, minutes, customMessage }) {
 /**
  * Creates and delivers a one-time password.
  * Enforces a resend cooldown and an hourly cap per phone/email + purpose.
+ * `smsTemplate` picks the DLT template for SMS providers that need one (default: the generic OTP template).
  */
-async function issueOtp({ target, channel, purpose, requestedBy = null, ip = null, customMessage }) {
+async function issueOtp({ target, channel, purpose, requestedBy = null, ip = null, customMessage, smsTemplate }) {
   const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
   const recent = unwrap(
     await supabase
@@ -84,8 +85,14 @@ async function issueOtp({ target, channel, purpose, requestedBy = null, ip = nul
   const minutes = Math.round(env.OTP_TTL_SECONDS / 60);
   const message = buildMessage({ code, purpose, minutes, customMessage });
   try {
-    if (channel === 'sms') await sendSms(target, message);
-    else await sendEmail({ to: target, subject: 'Your MedShift360 verification code', text: message });
+    if (channel === 'sms') {
+      await sendSms(target, message, {
+        name: smsTemplate?.name || 'otp',
+        vars: { ...smsTemplate?.vars, otp: code, minutes: String(minutes) },
+      });
+    } else {
+      await sendEmail({ to: target, subject: 'Your MedShift360 verification code', text: message });
+    }
   } catch (err) {
     // Undelivered OTP must not count as valid
     await supabase.from('otp_codes').update({ consumed_at: new Date().toISOString() }).eq('id', row.id);

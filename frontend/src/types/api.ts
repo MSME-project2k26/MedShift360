@@ -80,6 +80,8 @@ export interface PatientProfile {
   district: string | null;
   state: string | null;
   pincode: string | null;
+  homeLatitude: number | null;
+  homeLongitude: number | null;
   chronicConditions: string[];
   allergies: string[];
   currentMedications: Medication[];
@@ -112,3 +114,88 @@ export interface ProfileResult {
 }
 
 export type InsuranceFields = Pick<PatientProfile, "insuranceProvider" | "insurancePolicyNumber" | "abhaNumber" | "pmjayId">;
+
+// ---------- Nearby hospitals & doctors (live OpenStreetMap data) ----------
+
+export interface LatLng {
+  lat: number;
+  lng: number;
+}
+
+export type Ownership = "government" | "private";
+
+export interface Place {
+  /** e.g. "node-123456" */
+  id: string;
+  name: string;
+  /** Name in the local script, when different */
+  localName: string | null;
+  kind: "hospital" | "clinic" | "doctor" | "dentist";
+  ownership: Ownership;
+  /** "tagged" in the map data, inferred from the "name", or "assumed" (no government signal) */
+  ownershipSource: "tagged" | "name" | "assumed";
+  operator: string | null;
+  location: LatLng;
+  distanceKm: number | null;
+  address: string | null;
+  district: string | null;
+  state: string | null;
+  pincode: string | null;
+  phone: string | null;
+  emergencyPhone: string | null;
+  website: string | null;
+  email: string | null;
+  openingHours: string | null;
+  /** true / false when listed, null when the map data does not say */
+  emergency: boolean | null;
+  beds: number | null;
+  specialities: string[];
+  wheelchair: string | null;
+  description: string | null;
+  directionsUrl: string;
+  osmUrl: string;
+}
+
+export interface DataSource {
+  name: string;
+  attribution: string;
+  license: string;
+  url: string;
+}
+
+export interface NearbyHospitals {
+  origin: LatLng;
+  radiusKm: number;
+  counts: { all: number; government: number; private: number };
+  hospitals: Place[];
+  source: DataSource;
+}
+
+export interface HospitalDetailResult {
+  hospital: Place;
+  source: DataSource;
+}
+
+export type MatchedBy = "speciality_tag" | "name" | "multi_speciality" | "general";
+
+export interface SuggestedPlace extends Place {
+  matchedBy: MatchedBy;
+}
+
+export interface DoctorSuggestion {
+  specialty: { key: string; label: string; doctorTitle: string };
+  forConditions: string[];
+  reason: string;
+  doctors: SuggestedPlace[];
+  hospitals: SuggestedPlace[];
+}
+
+export interface DoctorSuggestions {
+  conditions: string[];
+  location: LatLng & { source: "device" | "home" };
+  radiusKm: number;
+  suggestions: DoctorSuggestion[];
+  disclaimer: string;
+  source: DataSource;
+  generatedAt: string;
+}

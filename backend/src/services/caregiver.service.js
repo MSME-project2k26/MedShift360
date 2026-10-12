@@ -91,6 +91,8 @@ async function requestLink(caregiver, { phone }, ip) {
     customMessage: (code, minutes) =>
       `${caregiver.full_name} wants to help manage your MedShift360 health profile. ` +
       `If you agree, share OTP ${code} with them. Valid for ${minutes} minutes. Ignore this message if you do not know them.`,
+    // DLT allows at most 30 characters per template variable
+    smsTemplate: { name: 'caregiver_link', vars: { name: caregiver.full_name.slice(0, 30) } },
   });
 }
 

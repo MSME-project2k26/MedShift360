@@ -3,6 +3,7 @@ const { sendSuccess } = require('../utils/response');
 const authRoutes = require('./auth.routes');
 const usersRoutes = require('./users.routes');
 const dependentsRoutes = require('./dependents.routes');
+const hospitalsRoutes = require('./hospitals.routes');
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.get('/health', (req, res) =>
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
 router.use('/dependents', dependentsRoutes);
+router.use('/hospitals', hospitalsRoutes);
 
 module.exports = router;
